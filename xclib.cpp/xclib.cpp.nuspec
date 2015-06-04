@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>xclib.cpp</id>
+    <version>1.0.0.103</version>
+    <title>xclib.cpp</title>
+    <authors>Light</authors>
+    <owners>Light</owners>
+    <description>C++ wrapper for xclib.</description>
+    <summary>C++ wrapper for xclib.</summary>
+    <releaseNotes></releaseNotes>
+    <language>en-US</language>
+    <!--<projectUrl></projectUrl>-->
+    <!--<licenseUrl></licenseUrl>-->
+    <!--<iconUrl></iconUrl>-->
+    <!--<copyright></copyright>-->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <dependencies>
+      <dependency id="xclib" version="3.8.0.25063" />
+      <dependency id="rxcpp" version="2.1.1" />
+      <dependency id="win32.cpp" version="1.0.0.108" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="include\**\*.hpp" target="build\native\include\" />
+    <file src="xclib.cpp.targets" target="build\native\xclib.cpp.targets" />
+  </files>
+</package>

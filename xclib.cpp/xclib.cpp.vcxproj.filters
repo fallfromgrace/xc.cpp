@@ -25,9 +25,6 @@
     <ClInclude Include="include\frame_grabber.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\xclib.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\capture_event.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -52,10 +49,22 @@
     <ClInclude Include="include\helpers.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\frame_buffer_info.hpp">
+    <ClInclude Include="include\capture_observable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\capture_observable.hpp">
+    <ClInclude Include="include\frame_grabber_options.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\image_info.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\fault_info.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\observable_base.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xclib.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

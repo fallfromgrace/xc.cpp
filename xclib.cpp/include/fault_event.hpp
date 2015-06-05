@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include <Windows.h>
 
+#include "includes.hpp"
+#include "logging\logging.hpp"
 #include "xcliball.h"
 
 namespace xc
@@ -13,33 +15,70 @@ namespace xc
 		class fault_event
 		{
 		public:
-			fault_event(pxdstate_s* instance, int unitmap, int rsvd = 0) :
-				instance(instance),
-				unitmap(unitmap),
+			fault_event(pxdstate_s* state, int map, int rsvd = 0) :
+				state(state),
+				map(map),
 				rsvd(rsvd),
-				event_handle(::pxe_eventFaultCreate(instance, unitmap, rsvd))
+				event_handle(nullptr)
 			{
-				if (event_handle == nullptr)
-					throw std::runtime_error("pxe_eventFaultCreate");
+				this->alloc();
 			}
+
+			fault_event(fault_event&& other) :
+				state(other.state), map(other.map), 
+				rsvd(other.rsvd), event_handle(other.event_handle)
+			{
+				other.event_handle = nullptr;
+			}
+
+			fault_event(const fault_event&) = delete;
+
+			fault_event& operator=(const fault_event&) = delete;
 
 			~fault_event()
 			{
-				::pxe_eventFaultClose(
-					this->instance,
-					this->unitmap,
-					this->rsvd,
-					this->event_handle);
+				try
+				{
+					this->release();
+				}
+				catch (const std::exception& ex)
+				{
+					log_error(ex.what());
+				}
 			}
 
 			HANDLE handle() const
 			{
 				return this->event_handle;
 			}
+
+			void alloc()
+			{
+				this->release();
+				this->event_handle = ::pxe_eventFaultCreate(this->state, this->map, this->rsvd);
+				if (this->event_handle == nullptr)
+					throw std::runtime_error("pxe_eventCapturedFieldCreate");
+			}
+
+			bool_t is_alloc() const
+			{
+				return this->event_handle != nullptr;
+			}
+
+			void release()
+			{
+				if (this->is_alloc() == true)
+				{
+					::pxe_eventFaultClose(
+						this->state, this->map,
+						this->rsvd, this->event_handle);
+					this->event_handle = nullptr;
+				}
+			}
 		private:
-			pxdstate_s* instance;
-			int unitmap;
-			int rsvd;
+			pxdstate_s* const state;
+			const int map;
+			const int rsvd;
 			HANDLE event_handle;
 		};
 	}

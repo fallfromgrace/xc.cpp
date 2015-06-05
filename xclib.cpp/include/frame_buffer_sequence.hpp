@@ -16,13 +16,28 @@ namespace xc
 		public:
 			frame_buffer_sequence(pxdstate_s* state, int unitmap, int buffers)
 			{
-				for (pxbuffer_t buffer = 1; buffer <= buffers; buffer++)
-					frame_buffers.emplace_back(state, unitmap, buffer);
+				for (pxbuffer_t id = 1; id <= buffers; id++)
+					frame_buffers.emplace_back(state, unitmap, id);
 			}
 
-			frame_buffer_info get(pxbuffer_t buffer) const
+			frame_buffer_sequence(frame_buffer_sequence&& other) : 
+				frame_buffers(std::move(other.frame_buffers))
 			{
-				return this->frame_buffers[buffer - 1].info();
+
+			}
+
+			frame_buffer_sequence(const frame_buffer_sequence&) = delete;
+
+			frame_buffer_sequence& operator=(const frame_buffer_sequence&) = delete;
+
+			const frame_buffer& get(pxbuffer_t buffer) const
+			{
+				return this->frame_buffers[buffer - 1];
+			}
+
+			size_t size() const
+			{
+				return this->frame_buffers.size();
 			}
 
 		private:

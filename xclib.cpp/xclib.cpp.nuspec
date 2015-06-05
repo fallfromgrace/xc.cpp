@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>xclib.cpp</id>
-    <version>1.0.0.103</version>
+    <version>1.0.0.119</version>
     <title>xclib.cpp</title>
     <authors>Light</authors>
     <owners>Light</owners>

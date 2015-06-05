@@ -8,38 +8,12 @@
 #include "win32\win32_exception.hpp"
 #include "xcliball.h"
 
+#include "fault_info.hpp"
 #include "fault_event.hpp"
 #include "frame_grabber_unit.hpp"
 
 namespace xc
 {
-	// 
-	class fault_info
-	{
-	public:
-
-		fault_info(int port, const std::string& message) :
-			port_(port), message(message)
-		{
-
-		}
-
-		int port() const
-		{
-			return this->port_;
-		}
-
-		const std::string& what() const
-		{
-			return this->message;
-		}
-
-	private:
-
-		int port_;
-		std::string message;
-	};
-
 	namespace detail
 	{
 		// 
@@ -48,19 +22,43 @@ namespace xc
 		public:
 			// 
 			fault_observable(
-				pxdstate* state,
-				const std::vector<frame_grabber_unit_info>& units) :
-				state(state),
-				units(units)
+				const std::vector<std::unique_ptr<detail::frame_grabber_unit>>& units)
 			{
-				for (const auto& unit_info : this->units)
-					this->wait_handles.emplace_back(unit_info.fault_event_handle());
+				for (const auto& unit : units)
+				{
+					this->units.push_back(unit.get());
+					this->wait_handles.emplace_back(unit->fault_event().handle());
+				}
 				this->wait_handles.emplace_back(this->close_event.handle());
 
-				this->thread = std::thread(this, &fault_observable::observer);
+				this->connect();
 			}
 
+			fault_observable(const fault_observable&) = delete;
+
+			fault_observable& operator=(const fault_observable&) = delete;
+
 			~fault_observable()
+			{
+				try
+				{
+					this->disconnect();
+				}
+				catch (const std::exception& ex)
+				{
+					log_error(ex.what());
+				}
+			}
+
+			// 
+			void connect()
+			{
+				this->disconnect();
+				this->thread = std::thread(&fault_observable::observe, this);
+			}
+
+			// 
+			void disconnect()
 			{
 				if (this->thread.joinable() == true)
 				{
@@ -76,91 +74,95 @@ namespace xc
 
 		private:
 
-			bool_t on_wait_success(DWORD wait_handle_index)
+			template<typename observer>
+			bool_t on_wait_success(
+				observer&& observer, 
+				DWORD wait_handle_index)
 			{
 				if (wait_handle_index == units.size())
 				{
-					this->observer.on_completed();
+					observer.on_completed();
 					return false;
 				}
 				else
 				{
-					auto unit = this->units[wait_handle_index];
-
-					std::array<char, 1024> buffer;
-					int fault_result = ::pxe_mesgFaultText(this->state, unit.map(), buffer.data(), buffer.size());
-					if (fault_result == 1)
-						this->observer.on_next(fault_info(unit.port(), buffer.data()));
-					else if (fault_result == 0)
+					try
+					{
+						this->units[wait_handle_index]->check_fault();
 						log_warn("Fault event triggered but no fault recorded by XCLIB.");
-					else if (fault_result > 0)
-						log_warn(::pxd_mesgErrorCode(fault_result));
-					else
-						log_error(::pxd_mesgErrorCode(fault_result));
+					}
+					catch (const std::exception& ex)
+					{
+						observer.on_next(fault_info(
+							this->units[wait_handle_index]->port(), 
+							std::string(ex.what())));
+					}
 					return true;
 				}
 			}
 
-			bool_t on_wait_abandoned(DWORD wait_handle_index)
+			template<typename observer>
+			bool_t on_wait_abandoned(
+				observer&& observer,
+				DWORD wait_handle_index)
 			{
 				if (wait_handle_index == units.size())
-				{
-					this->observer.on_next(fault_info(0, "close wait handle abandoned unexpectedly"));
-				}
+					log_error("Close wait handle abandoned unexpectedly.");
 				else
-				{
-					auto unit = this->units[wait_handle_index];
-					this->observer.on_next(fault_info(unit.port(), "fault wait handle abandoned unexpectedly"));
-				}
-				this->observer.on_completed();
+					log_error("Fault wait handle for unit on port %i abandoned unexpectedly.",
+						this->units[wait_handle_index]->port());
+				observer.on_completed();
 				return false;
 			}
 
-			bool_t on_wait_timeout()
+			template<typename observer>
+			bool_t on_wait_timeout(observer&& observer)
 			{
-				this->observer.on_next(fault_info(0, "fault wait handle timed out unexpectedly"));
-				this->observer.on_completed();
+				log_error("Wait timed out unexpectedly.");
+				observer.on_completed();
 				return false;
 			}
 
-			bool_t on_wait_failed()
+			template<typename observer>
+			bool_t on_wait_failed(observer&& observer)
 			{
-				this->observer.on_next(fault_info(0, win32::get_last_win32_error_message()));
-				this->observer.on_completed();
+				log_error(win32::get_last_win32_error_message());
+				observer.on_completed();
 				return false;
 			}
 
-			void observer()
+			void observe()
 			{
 				bool_t observing = true;
+
+				auto observer = this->fault_subject.get_subscriber().get_observer();
 				while (observing == true)
 				{
 					DWORD wait_result = ::WaitForMultipleObjects(
-						this->wait_handles.size(),
+						static_cast<DWORD>(this->wait_handles.size()),
 						this->wait_handles.data(),
 						false, INFINITE);
 
 					if (wait_result == WAIT_FAILED)
-						observing = on_wait_failed();
+						observing = on_wait_failed(observer);
 					else if (wait_result == WAIT_TIMEOUT)
-						observing = on_wait_timeout();
-					else if (wait_result & WAIT_ABANDONED_0 == WAIT_ABANDONED_0)
-						observing = on_wait_abandoned(wait_result - WAIT_ABANDONED_0);
-					else if (wait_result & WAIT_OBJECT_0 == WAIT_OBJECT_0)
-						observing = on_wait_success(wait_result - WAIT_OBJECT_0);
+						observing = on_wait_timeout(observer);
+					else if ((wait_result & WAIT_ABANDONED_0) == WAIT_ABANDONED_0)
+						observing = on_wait_abandoned(observer, wait_result - WAIT_ABANDONED_0);
+					else if ((wait_result & WAIT_OBJECT_0) == WAIT_OBJECT_0)
+						observing = on_wait_success(observer, wait_result - WAIT_OBJECT_0);
 					else
-						observing = on_wait_failed();
+						observing = on_wait_failed(observer);
 				}
 			}
 
-			pxdstate* state;
-			rxcpp::observer<fault_info> observer;
-			rxcpp::observable<fault_info> observable;
-			rxcpp::subjects::subject<fault_info> fault_subject;
-			std::vector<HANDLE> wait_handles;
-			std::vector<frame_grabber_unit_info> units;
 			win32::manual_reset_event close_event;
 			std::thread thread;
+
+			rxcpp::subjects::subject<fault_info> fault_subject;
+
+			std::vector<HANDLE> wait_handles;
+			std::vector<detail::frame_grabber_unit*> units;
 		};
 	}
 }

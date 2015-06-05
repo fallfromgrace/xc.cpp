@@ -69,7 +69,7 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros">
-    <NuGetPackageImportStamp>3337788d</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>9289c001</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -83,9 +83,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(ProjectDir)bin\$(PlatformTarget)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(PlatformTarget)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(ProjectDir)bin\$(PlatformTarget)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(PlatformTarget)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -176,22 +180,25 @@
     <ClInclude Include="include\capture_event.hpp" />
     <ClInclude Include="include\capture_observable.hpp" />
     <ClInclude Include="include\fault_event.hpp" />
+    <ClInclude Include="include\fault_info.hpp" />
     <ClInclude Include="include\fault_observable.hpp" />
     <ClInclude Include="include\frame_buffer.hpp" />
-    <ClInclude Include="include\frame_buffer_info.hpp" />
     <ClInclude Include="include\frame_buffer_sequence.hpp" />
     <ClInclude Include="include\frame_grabber.hpp" />
+    <ClInclude Include="include\frame_grabber_options.hpp" />
     <ClInclude Include="include\frame_grabber_unit.hpp" />
     <ClInclude Include="include\gpio_event.hpp" />
     <ClInclude Include="include\helpers.hpp" />
+    <ClInclude Include="include\image_info.hpp" />
+    <ClInclude Include="include\observable_base.hpp" />
     <ClInclude Include="include\xclib.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-    <Import Project="..\packages\win32.cpp.1.0.0.106\build\native\win32.cpp.targets" Condition="Exists('..\packages\win32.cpp.1.0.0.106\build\native\win32.cpp.targets')" />
     <Import Project="..\packages\rxcpp.2.1.1\build\native\rxcpp.targets" Condition="Exists('..\packages\rxcpp.2.1.1\build\native\rxcpp.targets')" />
-    <Import Project="..\packages\stdex.1.0.0.106\build\native\stdex.targets" Condition="Exists('..\packages\stdex.1.0.0.106\build\native\stdex.targets')" />
+    <Import Project="..\packages\more.cpp.1.0.0.107\build\native\more.cpp.targets" Condition="Exists('..\packages\more.cpp.1.0.0.107\build\native\more.cpp.targets')" />
+    <Import Project="..\packages\win32.cpp.1.0.0.108\build\native\win32.cpp.targets" Condition="Exists('..\packages\win32.cpp.1.0.0.108\build\native\win32.cpp.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -199,8 +206,8 @@
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
     <Error Condition="!Exists('..\packages\xclib.3.8.0.25063\build\native\xclib.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xclib.3.8.0.25063\build\native\xclib.props'))" />
-    <Error Condition="!Exists('..\packages\win32.cpp.1.0.0.106\build\native\win32.cpp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\win32.cpp.1.0.0.106\build\native\win32.cpp.targets'))" />
     <Error Condition="!Exists('..\packages\rxcpp.2.1.1\build\native\rxcpp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\rxcpp.2.1.1\build\native\rxcpp.targets'))" />
-    <Error Condition="!Exists('..\packages\stdex.1.0.0.106\build\native\stdex.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\stdex.1.0.0.106\build\native\stdex.targets'))" />
+    <Error Condition="!Exists('..\packages\more.cpp.1.0.0.107\build\native\more.cpp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\more.cpp.1.0.0.107\build\native\more.cpp.targets'))" />
+    <Error Condition="!Exists('..\packages\win32.cpp.1.0.0.108\build\native\win32.cpp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\win32.cpp.1.0.0.108\build\native\win32.cpp.targets'))" />
   </Target>
 </Project>

@@ -8,87 +8,50 @@
 
 #include <chrono>
 
+#include "helpers.hpp"
+#include "image_info.hpp"
+
 namespace xc
 {
 	namespace detail
 	{
-
-		class frame_grabber_unit_info
+		image_info from_frame_buffer(
+			int port,
+			const detail::frame_buffer& frame_buffer)
 		{
-		public:
-			frame_grabber_unit_info(
-				HANDLE capture_event_handle,
-				HANDLE fault_event_handle, 
-				int port, 
-				int map) :
-				capture_event_handle_(capture_event_handle),
-				fault_event_handle_(fault_event_handle),
-				port_(port),
-				map_(map)
-			{
+			return image_info(
+				port,
+				frame_buffer.width(),
+				frame_buffer.height(),
+				frame_buffer.stride(),
+				frame_buffer.step(),
+				frame_buffer.data(),
+				frame_buffer.get_timestamp());
+		}
 
-			}
-
-			HANDLE fault_event_handle() const
-			{
-				return this->fault_event_handle_;
-			}
-
-			HANDLE capture_event_handle() const
-			{
-				return this->capture_event_handle_;
-			}
-
-			int port() const
-			{
-				return this->port_;
-			}
-
-			int map() const
-			{
-				return this->map_;
-			}
-
-		private:
-			HANDLE fault_event_handle_;
-			HANDLE capture_event_handle_;
-			int port_;
-			int map_;
-		};
-
-		class image
-		{
-		public:
-			image(
-				const frame_buffer_info& frame_buffer_info,
-				uint32 timestamp_buffer[2]) : 
-				frame_buffer_info(frame_buffer_info),
-				time_point(std::chrono::system_clock::from_time_t(*reinterpret_cast<time_t*>(timestamp_buffer)))
-			{
-
-			}
-
-			const std::chrono::system_clock::time_point& timestamp() const
-			{
-				return this->time_point;
-			}
-
-			const frame_buffer_info& info() const
-			{
-				return this->frame_buffer_info;
-			}
-		private:
-			frame_buffer_info frame_buffer_info;
-			std::chrono::system_clock::time_point time_point;
-		};
-
+		// Manages resources for a single frame grabber unit.
 		class frame_grabber_unit
 		{
 		public:
-			frame_grabber_unit(pxdstate* state, int port, int unitmap, int buffers) : 
-				sequence(state, unitmap, buffers),
-				capture_event(state, unitmap),
-				fault_event(state, unitmap)
+			// 
+			frame_grabber_unit(pxdstate* state, int port, int map, int buffers) : 
+				state(state),
+				port_(port),
+				map_(map),
+				sequence(state, map, buffers),
+				capture_event_(state, map),
+				fault_event_(state, map)
+			{
+
+			}
+
+			frame_grabber_unit(frame_grabber_unit&& other) :
+				state(other.state), 
+				port_(other.port_), 
+				map_(other.map_), 
+				sequence(std::move(other.sequence)),
+				capture_event_(std::move(other.capture_event_)),
+				fault_event_(std::move(other.fault_event_))
 			{
 
 			}
@@ -97,57 +60,86 @@ namespace xc
 
 			frame_grabber_unit& operator=(const frame_grabber_unit&) = delete;
 
-			frame_grabber_unit_info info() const
+			// G
+			const capture_event& capture_event() const
 			{
-				return frame_grabber_unit_info(
-					this->capture_event.handle(),
-					this->fault_event.handle(),
-					this->port,
-					this->map);
+				return this->capture_event_;
+			}
+
+			// Gets a windows event that is raised when a fault occurs.
+			const fault_event& fault_event() const
+			{
+				return this->fault_event_;
+			}
+
+			// Gets the port this unit is on.
+			int port() const
+			{
+				return this->port_;
+			}
+
+			// Gets the port mapping for this unit.
+			int map() const
+			{
+				return this->map_;
 			}
 
 			// Returns access to the last captured image.
-			image last_captured_image() const
+			image_info get_last_captured_image() const
 			{
-				pxbuffer_t buffer = ::pxe_capturedBuffer(this->state, this->map);
+				pxbuffer_t buffer = ::pxe_capturedBuffer(this->state, this->map_);
 				if (buffer <= 0)
 					throw std::runtime_error("pxe_capturedBuffer");
 
-				uint32 timestamp_buffer[2];
-				int result = ::pxe_buffersSysTicks2(this->state, this->map, buffer, timestamp_buffer);
-				handle_result(result);
-
-				return image(
-					this->sequence.get(buffer),
-					timestamp_buffer);
+				return from_frame_buffer(
+					this->port_,
+					this->sequence.get(buffer));
 			}
 
+			// Checks if capturing on this unit.
 			bool_t is_capturing()
 			{
-				auto result = pxe_goneLive(this->state, map, 0);
+				auto result = pxe_goneLive(this->state, this->map_, 0);
 				return result == 0 ? false : true;
 			}
 
-			// begins capture and enables strobe.
+			// Begins capture on this unit
 			void start_capture()
 			{
-				int result = pxe_goLiveSeq(this->state, map, 1, 10, 1, 0, 1);
+				int result = pxe_goLiveSeq(
+					this->state, 
+					this->map_, 
+					1, static_cast<pxbuffer_t>(this->sequence.size()), 
+					1, 0, 1);
 				detail::handle_result(result);
 			}
 
-			// ends capture and disables strobe.
+			// Ends capture on this unit
 			void stop_capture()
 			{
-				int result = pxe_goUnLive(this->state, map);
+				int result = pxe_goUnLive(this->state, this->map_);
 				detail::handle_result(result);
 			}
 
+			// Checks the unit for faults.  Throws an exception if a fault is detected.
+			// NOTE: using exceptions for control flow makes me feel icky.
+			void check_fault() const
+			{
+				std::array<char, 1024> buffer;
+				int result = ::pxe_mesgFaultText(
+					this->state, this->map_, 
+					buffer.data(), buffer.size());
+				if (result == 1)
+					throw std::runtime_error(std::string(buffer.data()));
+				else
+					detail::handle_result(result);
+			}
 		private:
-			pxdstate* state;
-			int port;
-			int map;
-			capture_event capture_event;
-			fault_event fault_event;
+			pxdstate* const state;
+			const int port_;
+			const int map_;
+			xc::detail::capture_event capture_event_;
+			xc::detail::fault_event fault_event_;
 			frame_buffer_sequence sequence;
 		};
 	}

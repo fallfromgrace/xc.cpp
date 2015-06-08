@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\frame_grabber_tests.cpp">
+    <ClCompile Include="src\frame_grabber_connected_tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

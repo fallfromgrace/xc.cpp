@@ -69,7 +69,7 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros">
-    <NuGetPackageImportStamp>9289c001</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>b7522a69</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -124,6 +124,9 @@
     <PostBuildEvent>
       <Command>$(SolutionDir).nuget\NuGet.exe pack $(ProjectDir)$(ProjectName).nuspec -IncludeReferencedProjects -OutputDirectory $(SolutionDir)..\..\Packages\NuGet\</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>powershell $(ProjectDir)update_nuspec.ps1 -project $(ProjectName)</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -171,6 +174,7 @@
     <None Include="include\VideoTriggerDisabled.fmt" />
     <None Include="include\VideoTriggerEnabled.fmt" />
     <None Include="packages.config" />
+    <None Include="update_nuspec.ps1" />
     <None Include="xclib.cpp.nuspec">
       <SubType>Designer</SubType>
     </None>
@@ -191,14 +195,14 @@
     <ClInclude Include="include\helpers.hpp" />
     <ClInclude Include="include\image_info.hpp" />
     <ClInclude Include="include\observable_base.hpp" />
-    <ClInclude Include="include\xclib.hpp" />
+    <ClInclude Include="include\driver.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
     <Import Project="..\packages\rxcpp.2.1.1\build\native\rxcpp.targets" Condition="Exists('..\packages\rxcpp.2.1.1\build\native\rxcpp.targets')" />
-    <Import Project="..\packages\more.cpp.1.0.0.107\build\native\more.cpp.targets" Condition="Exists('..\packages\more.cpp.1.0.0.107\build\native\more.cpp.targets')" />
-    <Import Project="..\packages\win32.cpp.1.0.0.108\build\native\win32.cpp.targets" Condition="Exists('..\packages\win32.cpp.1.0.0.108\build\native\win32.cpp.targets')" />
+    <Import Project="..\packages\more.cpp.0.1.5638.24106\build\native\more.cpp.targets" Condition="Exists('..\packages\more.cpp.0.1.5638.24106\build\native\more.cpp.targets')" />
+    <Import Project="..\packages\win32.cpp.0.1.5638.24619\build\native\win32.cpp.targets" Condition="Exists('..\packages\win32.cpp.0.1.5638.24619\build\native\win32.cpp.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -207,7 +211,7 @@
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
     <Error Condition="!Exists('..\packages\xclib.3.8.0.25063\build\native\xclib.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xclib.3.8.0.25063\build\native\xclib.props'))" />
     <Error Condition="!Exists('..\packages\rxcpp.2.1.1\build\native\rxcpp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\rxcpp.2.1.1\build\native\rxcpp.targets'))" />
-    <Error Condition="!Exists('..\packages\more.cpp.1.0.0.107\build\native\more.cpp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\more.cpp.1.0.0.107\build\native\more.cpp.targets'))" />
-    <Error Condition="!Exists('..\packages\win32.cpp.1.0.0.108\build\native\win32.cpp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\win32.cpp.1.0.0.108\build\native\win32.cpp.targets'))" />
+    <Error Condition="!Exists('..\packages\more.cpp.0.1.5638.24106\build\native\more.cpp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\more.cpp.0.1.5638.24106\build\native\more.cpp.targets'))" />
+    <Error Condition="!Exists('..\packages\win32.cpp.0.1.5638.24619\build\native\win32.cpp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\win32.cpp.0.1.5638.24619\build\native\win32.cpp.targets'))" />
   </Target>
 </Project>

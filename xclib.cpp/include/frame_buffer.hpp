@@ -34,6 +34,20 @@ namespace xc
 				other.image = nullptr;
 			}
 
+			//frame_buffer& operator=(frame_buffer&& other)
+			//{
+			//	this->release();
+			//	this->state = other.state;
+			//	this->map_ = other.map_;
+			//	this->id_ = other.id_;
+			//	this->image = other.image;
+			//	this->dat = other.dat;
+			//	std::memset(&other.dat, 0, sizeof(other.dat));
+			//	other.image = nullptr;
+			//}
+
+			frame_buffer& operator=(frame_buffer&&) = delete;
+
 			frame_buffer(const frame_buffer&) = delete;
 
 			frame_buffer& operator=(const frame_buffer&) = delete;

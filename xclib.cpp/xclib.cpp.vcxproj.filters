@@ -20,6 +20,7 @@
     <None Include="packages.config" />
     <None Include="include\VideoTriggerDisabled.fmt" />
     <None Include="include\VideoTriggerEnabled.fmt" />
+    <None Include="update_nuspec.ps1" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\frame_grabber.hpp">
@@ -64,7 +65,7 @@
     <ClInclude Include="include\observable_base.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\xclib.hpp">
+    <ClInclude Include="include\driver.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

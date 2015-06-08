@@ -14,7 +14,7 @@ namespace xc
 		class frame_buffer_sequence
 		{
 		public:
-			frame_buffer_sequence(pxdstate_s* state, int unitmap, int buffers)
+			frame_buffer_sequence(pxdstate_s* state, int unitmap, size_t buffers)
 			{
 				for (pxbuffer_t id = 1; id <= buffers; id++)
 					frame_buffers.emplace_back(state, unitmap, id);

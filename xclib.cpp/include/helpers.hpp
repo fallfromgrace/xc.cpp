@@ -21,6 +21,40 @@ namespace xc
 				throw std::runtime_error(std::string(::pxd_mesgErrorCode(result)));
 		}
 
+		class port_info
+		{
+		public:
+			port_info(int port, int map) :
+				port_(port), map_(map)
+			{
+
+			}
+
+			int port() const
+			{
+				return this->port_;
+			}
+
+			int map() const
+			{
+				return this->map_;
+			}
+		private:
+			const int port_;
+			const int map_;
+		};
+
+		std::vector<port_info> get_port_infos(const std::vector<int>& ports)
+		{
+			std::vector<port_info> ports_infos;
+
+			std::vector<int> ports_copy(ports);
+			std::sort(ports_copy.begin(), ports_copy.end());
+			for (size_t i = 0; i < ports_copy.size(); i++)
+				ports_infos.emplace_back(ports_copy[i], 1 << i);
+			return ports_infos;
+		}
+
 		int get_drivermap(const std::vector<int>& ports)
 		{
 			return std::accumulate(

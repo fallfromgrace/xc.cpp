@@ -34,7 +34,7 @@ namespace xc
 		{
 		public:
 			// 
-			frame_grabber_unit(pxdstate* state, int port, int map, int buffers) : 
+			frame_grabber_unit(pxdstate* state, int port, int map, size_t buffers) : 
 				state(state),
 				port_(port),
 				map_(map),

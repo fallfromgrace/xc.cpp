@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
@@ -20,10 +21,11 @@ namespace xc
 		public:
 			// 
 			driver(
-				const std::string& format_file_path,
 				const std::vector<int>& ports,
+				const std::string& format_file_path,
 				const frame_grabber_options& options) :
-				drivermap_(get_drivermap(ports)),
+				ports_(get_port_infos(ports)),
+				drivermap(get_drivermap(ports)),
 				format_file_path(format_file_path),
 				options_(options),
 				state_(nullptr),
@@ -37,7 +39,7 @@ namespace xc
 			driver& operator=(const driver&) = delete;
 
 			driver(driver&& other) :
-				drivermap_(other.drivermap_),
+				drivermap(other.drivermap),
 				format_file_path(std::move(other.format_file_path)),
 				options_(std::move(other.options_)),
 				state_(other.state_),
@@ -46,6 +48,8 @@ namespace xc
 				other.state_ = nullptr;
 				other.unitmap_ = 0;
 			}
+
+			driver& operator=(driver&&) = delete;
 
 			// 
 			~driver()
@@ -60,14 +64,14 @@ namespace xc
 				}
 			}
 
-			int drivermap() const
-			{
-				return this->drivermap_;
-			}
-
 			int unitmap() const
 			{
 				return this->unitmap_;
+			}
+
+			std::vector<port_info> ports() const
+			{
+				return this->ports_;
 			}
 
 			pxdstate* state()
@@ -101,12 +105,12 @@ namespace xc
 
 				int result = ::pxe_PIXCIopen(
 					this->state_,
-					const_cast<char*>(detail::get_driver_params(this->drivermap_, this->options_).c_str()),
+					const_cast<char*>(detail::get_driver_params(this->drivermap, this->options_).c_str()),
 					nullptr,
 					const_cast<char*>(this->format_file_path.c_str()));
 				this->check_fault();
 				detail::handle_result(result);
-				auto ports = detail::get_ports(this->drivermap_);
+				auto ports = detail::get_ports(this->drivermap);
 				for (int i = 0; i < ports.size(); i++)
 					this->unitmap_ += 1 << i;
 				//#include "VideoTriggerDisabled.fmt"
@@ -140,7 +144,8 @@ namespace xc
 					detail::handle_result(result);
 			}
 		private:
-			const int drivermap_;
+			const std::vector<port_info> ports_;
+			const int drivermap;
 			const std::string format_file_path;
 			const frame_grabber_options options_;
 			pxdstate_s* state_;

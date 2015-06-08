@@ -2,13 +2,14 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>xclib.cpp</id>
-    <version>1.0.0.119</version>
+    <version>0.1.5638.25100</version>
     <title>xclib.cpp</title>
     <authors>Light</authors>
     <owners>Light</owners>
     <description>C++ wrapper for xclib.</description>
     <summary>C++ wrapper for xclib.</summary>
-    <releaseNotes></releaseNotes>
+    <releaseNotes>
+    </releaseNotes>
     <language>en-US</language>
     <!--<projectUrl></projectUrl>-->
     <!--<licenseUrl></licenseUrl>-->
@@ -18,11 +19,12 @@
     <dependencies>
       <dependency id="xclib" version="3.8.0.25063" />
       <dependency id="rxcpp" version="2.1.1" />
-      <dependency id="win32.cpp" version="1.0.0.108" />
+      <dependency id="win32.cpp" version="0.1" />
     </dependencies>
   </metadata>
   <files>
     <file src="include\**\*.hpp" target="build\native\include\" />
+    <file src="include\**\*.fmt" target="build\native\include\" />
     <file src="xclib.cpp.targets" target="build\native\xclib.cpp.targets" />
   </files>
 </package>

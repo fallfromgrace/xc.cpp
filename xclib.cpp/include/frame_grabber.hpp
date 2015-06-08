@@ -21,7 +21,7 @@
 #include "frame_grabber_options.hpp"
 #include "capture_observable.hpp"
 #include "helpers.hpp"
-#include "xclib.hpp"
+#include "driver.hpp"
 
 namespace xc
 {
@@ -31,12 +31,19 @@ namespace xc
 	public:
 		// 
 		frame_grabber(
-			const std::string& format_file_path,
 			const std::vector<int>& ports,
+			const std::string& format_file_path,
 			const frame_grabber_options& options = frame_grabber_options()) :
-			driver(format_file_path, ports, options)
+			driver(ports, format_file_path, options)
 		{
-			this->open();
+			for (const auto& port_info : this->driver.ports())
+				this->units.push_back(std::make_unique<detail::frame_grabber_unit>(
+					this->driver.state(),
+					port_info.port(),
+					port_info.map(),
+					this->driver.options().buffer_count()));
+			this->fault_observable_ptr = std::make_unique<detail::fault_observable>(this->units);
+			this->capture_observable_ptr = std::make_unique<detail::capture_observable>(this->units);
 		}
 
 		frame_grabber(frame_grabber&& other) : 
@@ -52,46 +59,6 @@ namespace xc
 
 		frame_grabber& operator=(const frame_grabber&) = delete;
 
-		~frame_grabber()
-		{
-			try
-			{
-				this->close();
-			}
-			catch (const std::exception& ex)
-			{
-				log_error(ex.what());
-			}
-		}
-
-		// 
-		void open()
-		{
-			//this->close();
-			int index = 0;
-			for (auto port : detail::get_ports(this->driver.drivermap()))
-			{
-				this->units.push_back(
-					std::make_unique<detail::frame_grabber_unit>(this->driver.state(), port, 1 << index, 10));
-				index++;
-			}
-			this->fault_observable_ptr = std::make_unique<detail::fault_observable>(this->units);
-			this->capture_observable_ptr = std::make_unique<detail::capture_observable>(this->units);
-		}
-
-		// 
-		void close()
-		{
-			if (this->driver.is_open() == true)
-			{
-				//this->stop_capture();
-				//this->capture_observable_ptr->disconnect();
-				//this->fault_observable_ptr->disconnect();
-				//this->units.clear();
-				//this->driver.close();
-			}
-		}
-
 		// 
 		bool_t is_capturing()
 		{
@@ -99,13 +66,11 @@ namespace xc
 			return result == 0 ? false : true;
 		}
 
-		// begins capture and enables strobe.
+		// Begins capture
 		void start_capture()
 		{
 			if (this->is_capturing() == false)
 			{
-				//#include "VideoTriggerEnabled.fmt"
-				//pxd_videoFormatAsIncluded(0);
 				int result = pxe_goLiveSeq(
 					this->driver.state(),
 					this->driver.unitmap(),
@@ -115,16 +80,30 @@ namespace xc
 			}
 		}
 
-		// ends capture and disables strobe.
+		// Ends capture
 		void stop_capture()
 		{
 			if (this->is_capturing() == true)
 			{
-				//#include "VideoTriggerDisabled.fmt"
-				//pxd_videoFormatAsIncluded(0);
 				int result = pxe_goUnLive(this->driver.state(), this->driver.unitmap());
 				detail::handle_result(result);
 			}
+		}
+
+		void enable_strobe()
+		{
+			#include "VideoTriggerEnabled.fmt"
+			pxe_videoFormatAsIncludedInit(this->driver.state(), 0);
+			int result = pxe_videoFormatAsIncluded(this->driver.state(), 0);
+			detail::handle_result(result);
+		}
+
+		void disable_strobe()
+		{
+			#include "VideoTriggerDisabled.fmt"
+			pxe_videoFormatAsIncludedInit(this->driver.state(), 0);
+			int result = pxe_videoFormatAsIncluded(this->driver.state(), 0);
+			detail::handle_result(result);
 		}
 
 		rxcpp::observable<image_info> when_image_captured() const

@@ -18,54 +18,60 @@
     <None Include="xclib.cpp.nuspec" />
     <None Include="xclib.cpp.targets" />
     <None Include="packages.config" />
-    <None Include="include\VideoTriggerDisabled.fmt" />
-    <None Include="include\VideoTriggerEnabled.fmt" />
     <None Include="update_nuspec.ps1" />
+    <None Include="include\xc\detail\video_trigger_disabled.fmt" />
+    <None Include="include\xc\detail\video_trigger_enabled.fmt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\frame_grabber.hpp">
+    <ClInclude Include="include\xc\frame_grabber.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\capture_event.hpp">
+    <ClInclude Include="include\xc\detail\util.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\fault_event.hpp">
+    <ClInclude Include="include\xc\detail\high_resolution_system_time_point.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\gpio_event.hpp">
+    <ClInclude Include="include\xc\detail\xclib_state.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\frame_buffer.hpp">
+    <ClInclude Include="include\xc\detail\port_info.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\frame_buffer_sequence.hpp">
+    <ClInclude Include="include\xc\detail\capture_observable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\frame_grabber_unit.hpp">
+    <ClInclude Include="include\xc\detail\fault_observable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\fault_observable.hpp">
+    <ClInclude Include="include\xc\detail\capture_event.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\helpers.hpp">
+    <ClInclude Include="include\xc\detail\fault_event.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\capture_observable.hpp">
+    <ClInclude Include="include\xc\detail\fault_info.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\frame_grabber_options.hpp">
+    <ClInclude Include="include\xc\detail\frame_buffer_sequence.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\image_info.hpp">
+    <ClInclude Include="include\xc\detail\gpio_event.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\fault_info.hpp">
+    <ClInclude Include="include\xc\detail\image_view.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\observable_base.hpp">
+    <ClInclude Include="include\xc\detail\frame_buffer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\driver.hpp">
+    <ClInclude Include="include\xc\detail\frame_grabber_options.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xc\detail\frame_grabber_unit.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\xc\detail\frame_grabber_units.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

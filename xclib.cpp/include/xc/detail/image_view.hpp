@@ -2,27 +2,28 @@
 
 #include <chrono>
 
+#include "xc\detail\frame_buffer.hpp"
+#include "xc\detail\high_resolution_system_time_point.hpp"
+
 namespace xc
 {
 	// 
-	class image_info
+	class image_view
 	{
 	public:
-		image_info(
+		typedef std::chrono::system_clock::time_point time_point;
+
+		image_view(
 			int port,
-			size_t width,
-			size_t height,
-			size_t stride,
-			size_t step,
-			const void* data,
-			std::chrono::system_clock::time_point timestamp) :
+			const frame_buffer& frame_buffer,
+			const detail::high_resolution_system_time_point& clock) :
 			port_(port),
-			width_(width),
-			height_(height),
-			stride_(stride),
-			step_(step),
-			data_(data),
-			timestamp_(timestamp)
+			width_(frame_buffer.width()),
+			height_(frame_buffer.height()),
+			stride_(frame_buffer.stride()),
+			step_(frame_buffer.step()),
+			data_(frame_buffer.data()),
+			timestamp_(clock.get_system_time(frame_buffer.get_timestamp()))
 		{
 
 		}
@@ -57,7 +58,7 @@ namespace xc
 			return this->data_;
 		}
 
-		const std::chrono::system_clock::time_point& timestamp() const
+		const time_point& timestamp() const
 		{
 			return this->timestamp_;
 		}
@@ -68,6 +69,6 @@ namespace xc
 		size_t step_;
 		const void* data_;
 		int port_;
-		std::chrono::system_clock::time_point timestamp_;
+		time_point timestamp_;
 	};
 }

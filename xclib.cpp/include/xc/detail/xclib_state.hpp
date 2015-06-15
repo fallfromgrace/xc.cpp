@@ -6,21 +6,21 @@
 #include <vector>
 #include <Windows.h>
 
-#include "logging\logging.hpp"
+#include "more\log.hpp"
 
-#include "frame_grabber_options.hpp"
-#include "helpers.hpp"
+#include "xc\detail\frame_grabber_options.hpp"
+#include "xc\detail\util.hpp"
 
 namespace xc
 {
 	namespace detail
 	{
 		// Manages an instance to xclib.
-		class driver
+		class xclib_state
 		{
 		public:
 			// 
-			driver(
+			xclib_state(
 				const std::vector<int>& ports,
 				const std::string& format_file_path,
 				const frame_grabber_options& options) :
@@ -34,11 +34,8 @@ namespace xc
 				this->open();
 			}
 
-			driver(const driver&) = delete;
-
-			driver& operator=(const driver&) = delete;
-
-			driver(driver&& other) :
+			// 
+			xclib_state(xclib_state&& other) :
 				drivermap(other.drivermap),
 				format_file_path(std::move(other.format_file_path)),
 				options_(std::move(other.options_)),
@@ -49,10 +46,8 @@ namespace xc
 				other.unitmap_ = 0;
 			}
 
-			driver& operator=(driver&&) = delete;
-
 			// 
-			~driver()
+			~xclib_state()
 			{
 				try
 				{
@@ -60,31 +55,42 @@ namespace xc
 				}
 				catch (const std::exception& ex)
 				{
-					log_error(ex.what());
+					more::error(ex.what());
 				}
 			}
 
+			xclib_state(const xclib_state&) = delete;
+
+			xclib_state& operator=(const xclib_state&) = delete;
+
+			xclib_state& operator=(xclib_state&&) = delete;
+
+			// Gets the mapping for all connected units.
 			int unitmap() const
 			{
 				return this->unitmap_;
 			}
 
+			// 
 			std::vector<port_info> ports() const
 			{
 				return this->ports_;
 			}
 
-			pxdstate* state()
+			// Gets the allocated and initialized xclib state handle.
+			pxdstate* handle()
 			{
 				return this->state_;
 			}
 
-			const pxdstate* state() const
+			// Gets the allocated and initialized xclib state handle.
+			const pxdstate* handle() const
 			{
 				return this->state_;
 			}
 
-			frame_grabber_options options() const
+			// 
+			const frame_grabber_options& options() const
 			{
 				return this->options_;
 			}
@@ -110,11 +116,8 @@ namespace xc
 					const_cast<char*>(this->format_file_path.c_str()));
 				this->check_fault();
 				detail::handle_result(result);
-				auto ports = detail::get_ports(this->drivermap);
-				for (int i = 0; i < ports.size(); i++)
-					this->unitmap_ += 1 << i;
-				//#include "VideoTriggerDisabled.fmt"
-				//pxd_videoFormatAsIncluded(0);
+				for (int i = 0; i < this->ports_.size(); i++)
+					this->unitmap_ += (1 << i);
 			}
 
 			// 
@@ -131,7 +134,7 @@ namespace xc
 				}
 			}
 
-			// 
+			// Checks if a fault has occurred while openeing the xclib library.
 			void check_fault()
 			{
 				std::array<char, 1024> buffer;

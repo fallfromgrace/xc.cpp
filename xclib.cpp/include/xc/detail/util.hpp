@@ -2,12 +2,14 @@
 
 #include <bitset>
 #include <limits>
+#include <numeric>
 #include <stdexcept>
+#include <vector>
 
-#include "logging\logging.hpp"
+#include "more\log.hpp"
 #include "xcliball.h"
 
-#include "frame_grabber_options.hpp"
+#include "xc\detail\frame_grabber_options.hpp"
 
 namespace xc
 {
@@ -16,7 +18,7 @@ namespace xc
 		void handle_result(int result)
 		{
 			if (result > 0)
-				log_warn(std::string(::pxd_mesgErrorCode(result)));
+				more::warn(std::string(::pxd_mesgErrorCode(result)));
 			else if (result < 0)
 				throw std::runtime_error(std::string(::pxd_mesgErrorCode(result)));
 		}
@@ -82,7 +84,7 @@ namespace xc
 
 		std::string get_driver_params(int drivermap, const frame_grabber_options& options)
 		{
-			return common::format("-DM 0x%x", drivermap);
+			return more::format("-DM 0x%x", drivermap);
 		}
 	}
 }

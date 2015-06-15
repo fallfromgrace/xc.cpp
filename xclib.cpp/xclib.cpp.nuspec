@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>xclib.cpp</id>
-    <version>0.1.5638.25100</version>
+    <version>0.2.5645.34018</version>
     <title>xclib.cpp</title>
     <authors>Light</authors>
     <owners>Light</owners>
@@ -19,7 +19,7 @@
     <dependencies>
       <dependency id="xclib" version="3.8.0.25063" />
       <dependency id="rxcpp" version="2.1.1" />
-      <dependency id="win32.cpp" version="0.1" />
+      <dependency id="win32.cpp" version="0.2" />
     </dependencies>
   </metadata>
   <files>

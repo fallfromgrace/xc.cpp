@@ -1,18 +1,17 @@
 #include <cstdio>
 #include <tchar.h>
-#include "frame_grabber.hpp"
+#include "cameras_connected.hpp"
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	std::vector<int> v = { 1 };
+	xc::cameras_connected c;
 	try
 	{
-		xc::frame_grabber fg(v, "C:\\Users\\Light\\Desktop\\format.fmt");
-		fg.is_capturing();
+		c.capture();
 	}
 	catch (const std::exception& ex)
 	{
-		printf(ex.what());
+		printf("capture failed: %s", ex.what());
 	}
 	return 0;
 }

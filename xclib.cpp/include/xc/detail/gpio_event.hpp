@@ -4,7 +4,7 @@
 #include <Windows.h>
 
 #include "includes.hpp"
-#include "logging\logging.hpp"
+#include "more\log.hpp"
 #include "xcliball.h"
 
 namespace xc
@@ -12,29 +12,31 @@ namespace xc
 	namespace detail
 	{
 		// 
-		class capture_event
+		class gpio_event
 		{
 		public:
-			// 
-			capture_event(pxdstate_s* state, int map) : 
+			gpio_event(pxdstate_s* state, int map, int io, int rsvd = 0) :
 				state(state),
 				map(map),
+				io(io),
+				rsvd(rsvd),
 				event_handle(nullptr)
 			{
 				this->alloc();
 			}
 
-			capture_event(capture_event&& other) : 
-				state(other.state), map(other.map), event_handle(other.event_handle)
+			gpio_event(gpio_event&& other) :
+				state(other.state), map(other.map), io(other.io), 
+				rsvd(other.rsvd), event_handle(other.event_handle)
 			{
 				other.event_handle = nullptr;
 			}
 
-			capture_event(const capture_event&) = delete;
+			gpio_event(const gpio_event&) = delete;
 
-			capture_event& operator=(const capture_event&) = delete;
+			gpio_event& operator=(const gpio_event&) = delete;
 
-			~capture_event()
+			~gpio_event()
 			{
 				try
 				{
@@ -42,7 +44,7 @@ namespace xc
 				}
 				catch (const std::exception& ex)
 				{
-					log_error(ex.what());
+					logging::error(ex.what());
 				}
 			}
 
@@ -54,7 +56,9 @@ namespace xc
 			void alloc()
 			{
 				this->release();
-				this->event_handle = ::pxe_eventCapturedFieldCreate(this->state, this->map);
+				this->event_handle = ::pxe_eventGPTriggerCreate(
+					this->state, this->map, 
+					this->io, this->rsvd);
 				if (this->event_handle == nullptr)
 					throw std::runtime_error("pxe_eventCapturedFieldCreate");
 			}
@@ -68,13 +72,18 @@ namespace xc
 			{
 				if (this->is_alloc() == true)
 				{
-					::pxe_eventCapturedFieldClose(this->state, this->map, this->event_handle);
+					::pxe_eventGPTriggerClose(
+						this->state, this->map,
+						this->io, this->rsvd,
+						this->event_handle);
 					this->event_handle = nullptr;
 				}
 			}
 		private:
 			pxdstate_s* const state;
 			const int map;
+			const int io;
+			const int rsvd;
 			HANDLE event_handle;
 		};
 	}

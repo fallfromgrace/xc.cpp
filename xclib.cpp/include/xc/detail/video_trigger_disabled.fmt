@@ -2,10 +2,10 @@
 /*
  * Structure:	pxvidformat
  * Copyright:	(C) EPIX, Inc. 2000-2013
- * Created:	Mon Jun 08 09:56:37 2015
+ * Created:	Fri Jun 12 10:34:33 2015
  * By:		EPIX(r)  XCAP V3.8
  * 		PIXCI(R) 64 Bit Library 3.08.00 [14.07.08]
- * 		PIXCI(R) 64 Bit Driver V3.8.00 [14.07.09.191424]
+ * 		PIXCI(R) 64 Bit driver V3.8.00 [14.07.09.191424]
  * OS:		Windows 64 bit
  */
 struct pxvidformat pxvidformat_561_id31232 =
@@ -35,8 +35,8 @@ struct pxvidformat pxvidformat_561_id31232 =
     0,      0,      0,      0,      0,      0,      0,      0,       /* fgcamera */
     0,                                                      /* fgsignature    */
     0,      0,      1,      0,                              /* fgcamdope      */
-    4,      1248,   0,      2,                              /* xviddim        */
-    4,      1248,   0,      2,                              /* xdatdim        */
+    2,      1248,   0,      2,                              /* xviddim        */
+    2,      1248,   0,      2,                              /* xdatdim        */
     1,      1082,   0,      0,                              /* yviddim        */
     1,      1082,   0,      0,                              /* ydatdim        */
     0,      1248,   0,      0,                              /* xvidoffset     */
@@ -88,7 +88,7 @@ struct pxvidformat pxvidformat_561_id31232 =
     1,      170,                                            /* is.vperiod     */
     1,      183940,                                         /* is.hperiod     */
     170,    1,                                              /* is.framerate   */
-    1,                                                      /* is.fieldperiodicity */
+    2,                                                      /* is.fieldperiodicity */
     1,                                                      /* is.lineperiodicity */
     108,                                                    /* is.hscanorder  */
     116,                                                    /* is.vscanorder  */
@@ -124,7 +124,7 @@ struct pxvidformat pxvidformat_561_id31232 =
     0,      0,      0,      0,      0,      0,      0,      0,      
     0,      0,      0,      0,      0,      0,      0,      0,       /* vid.pixbits */
     0,      0,      0,      0,      0,      0,      0,      0,       /* vid.pixmems */
-    17252,  17256,  17260,  17264,  17268,  17272,  17276,  17280,   /* vid.pixdopes */
+    28180,  28184,  28188,  28192,  28196,  28200,  28204,  28208,   /* vid.pixdopes */
     1,      0,      0,      0,      0,      0,      0,      0,       /* dat.pixhints */
     8,      8,      0,      0,      0,      0,      0,      0,      
     0,      0,      0,      0,      0,      0,      0,      0,      
@@ -135,7 +135,7 @@ struct pxvidformat pxvidformat_561_id31232 =
     0,      0,      0,      0,      0,      0,      0,      0,      
     0,      0,      0,      0,      0,      0,      0,      0,       /* dat.pixbits */
     1,      0,      0,      0,      0,      0,      0,      0,       /* dat.pixmems */
-    1604,   1608,   1612,   1616,   1620,   1624,   1628,   1632,    /* dat.pixdopes */
+    15940,  15944,  15948,  16048,  16052,  16056,  16060,  16032,   /* dat.pixdopes */
     0,      0,      0,      0,      0,      0,      0,      0,       /* img.pixhints */
     0,      0,      0,      0,      0,      0,      0,      0,      
     0,      0,      0,      0,      0,      0,      0,      0,      
@@ -146,16 +146,16 @@ struct pxvidformat pxvidformat_561_id31232 =
     0,      0,      0,      0,      0,      0,      0,      0,      
     0,      0,      0,      0,      0,      0,      0,      0,       /* img.pixbits */
     0,      0,      0,      0,      0,      0,      0,      0,       /* img.pixmems */
-    121872180,      121872184,      121872188,      121872160,      121872164,      121872168,      121872172,      121872208,       /* img.pixdopes */
+    1389684420,     1389684424,     1389684428,     1389684464,     1389684468,     1389684472,     1389684476,     1389684448,      /* img.pixdopes */
 };
 
 /*
  * Structure:	pxvidres
  * Copyright:	(C) EPIX, Inc. 2000-2013
- * Created:	Mon Jun 08 09:56:37 2015
+ * Created:	Fri Jun 12 10:34:33 2015
  * By:		EPIX(r)  XCAP V3.8
  * 		PIXCI(R) 64 Bit Library 3.08.00 [14.07.08]
- * 		PIXCI(R) 64 Bit Driver V3.8.00 [14.07.09.191424]
+ * 		PIXCI(R) 64 Bit driver V3.8.00 [14.07.09.191424]
  * OS:		Windows 64 bit
  */
 struct pxvidres pxvidres_125_id31232 =
@@ -205,19 +205,19 @@ struct pxvidres pxvidres_125_id31232 =
     0,      0,      0,      0,                              /* vid.pixiebits  */
     0,                                                      /* vid.pixhint    */
     0,                                                      /* vid.pixmem     */
-    17252,                                                  /* vid.pixdope    */
+    28180,                                                  /* vid.pixdope    */
     0,                                                      /* vid.setpixbits */
     1,                                                      /* dat.pixies     */
     8,      0,      0,      0,                              /* dat.pixiebits  */
     1,                                                      /* dat.pixhint    */
     1,                                                      /* dat.pixmem     */
-    1604,                                                   /* dat.pixdope    */
+    15940,                                                  /* dat.pixdope    */
     0,                                                      /* dat.setpixbits */
     1,                                                      /* img.pixies     */
     8,      0,      0,      0,                              /* img.pixiebits  */
     1,                                                      /* img.pixhint    */
     0,                                                      /* img.pixmem     */
-    121872180,                                              /* img.pixdope    */
+    1389684420,                                             /* img.pixdope    */
     0,                                                      /* img.setpixbits */
     1248,                                                   /* line.pd        */
     1248,                                                   /* line.pdod      */
@@ -242,10 +242,10 @@ struct pxvidres pxvidres_125_id31232 =
 /*
  * Structure:	pxvidmode
  * Copyright:	(C) EPIX, Inc. 2000-2013
- * Created:	Mon Jun 08 09:56:37 2015
+ * Created:	Fri Jun 12 10:34:33 2015
  * By:		EPIX(r)  XCAP V3.8
  * 		PIXCI(R) 64 Bit Library 3.08.00 [14.07.08]
- * 		PIXCI(R) 64 Bit Driver V3.8.00 [14.07.09.191424]
+ * 		PIXCI(R) 64 Bit driver V3.8.00 [14.07.09.191424]
  * OS:		Windows 64 bit
  */
 struct pxvidmode pxvidmode_79_id31232 =
@@ -284,10 +284,10 @@ struct pxvidmode pxvidmode_79_id31232 =
 /*
  * Structure:	pxvidphys
  * Copyright:	(C) EPIX, Inc. 2000-2013
- * Created:	Mon Jun 08 09:56:37 2015
+ * Created:	Fri Jun 12 10:34:33 2015
  * By:		EPIX(r)  XCAP V3.8
  * 		PIXCI(R) 64 Bit Library 3.08.00 [14.07.08]
- * 		PIXCI(R) 64 Bit Driver V3.8.00 [14.07.09.191424]
+ * 		PIXCI(R) 64 Bit driver V3.8.00 [14.07.09.191424]
  * OS:		Windows 64 bit
  */
 struct pxvidphys pxvidphys_118_id31232 =
@@ -329,10 +329,10 @@ struct pxvidphys pxvidphys_118_id31232 =
 /*
  * Structure:	pxvidimage
  * Copyright:	(C) EPIX, Inc. 2000-2013
- * Created:	Mon Jun 08 09:56:37 2015
+ * Created:	Fri Jun 12 10:34:33 2015
  * By:		EPIX(r)  XCAP V3.8
  * 		PIXCI(R) 64 Bit Library 3.08.00 [14.07.08]
- * 		PIXCI(R) 64 Bit Driver V3.8.00 [14.07.09.191424]
+ * 		PIXCI(R) 64 Bit driver V3.8.00 [14.07.09.191424]
  * OS:		Windows 64 bit
  */
 struct pxvidimage pxvidimage_251_id31232 =
@@ -415,10 +415,10 @@ struct pxvidimage pxvidimage_251_id31232 =
 /*
  * Structure:	pxvidopt
  * Copyright:	(C) EPIX, Inc. 2000-2013
- * Created:	Mon Jun 08 09:56:37 2015
+ * Created:	Fri Jun 12 10:34:33 2015
  * By:		EPIX(r)  XCAP V3.8
  * 		PIXCI(R) 64 Bit Library 3.08.00 [14.07.08]
- * 		PIXCI(R) 64 Bit Driver V3.8.00 [14.07.09.191424]
+ * 		PIXCI(R) 64 Bit driver V3.8.00 [14.07.09.191424]
  * OS:		Windows 64 bit
  */
 struct pxvidopt pxvidopt_19_id31232 =
@@ -440,10 +440,10 @@ struct pxvidopt pxvidopt_19_id31232 =
 /*
  * Structure:	pxvidmem
  * Copyright:	(C) EPIX, Inc. 2000-2013
- * Created:	Mon Jun 08 09:56:37 2015
+ * Created:	Fri Jun 12 10:34:33 2015
  * By:		EPIX(r)  XCAP V3.8
  * 		PIXCI(R) 64 Bit Library 3.08.00 [14.07.08]
- * 		PIXCI(R) 64 Bit Driver V3.8.00 [14.07.09.191424]
+ * 		PIXCI(R) 64 Bit driver V3.8.00 [14.07.09.191424]
  * OS:		Windows 64 bit
  */
 struct pxvidmem pxvidmem_72_id31232 =
@@ -469,10 +469,10 @@ struct pxvidmem pxvidmem_72_id31232 =
 /*
  * Structure:	pxcamcntl
  * Copyright:	(C) EPIX, Inc. 2000-2013
- * Created:	Mon Jun 08 09:56:37 2015
+ * Created:	Fri Jun 12 10:34:33 2015
  * By:		EPIX(r)  XCAP V3.8
  * 		PIXCI(R) 64 Bit Library 3.08.00 [14.07.08]
- * 		PIXCI(R) 64 Bit Driver V3.8.00 [14.07.09.191424]
+ * 		PIXCI(R) 64 Bit driver V3.8.00 [14.07.09.191424]
  * OS:		Windows 64 bit
  */
 struct pxcamcntl pxcamcntl_264_id31232 =
@@ -538,10 +538,10 @@ struct pxcamcntl pxcamcntl_264_id31232 =
 /*
  * Structure:	xcsv2format
  * Copyright:	(C) EPIX, Inc. 2000-2013
- * Created:	Mon Jun 08 09:56:37 2015
+ * Created:	Fri Jun 12 10:34:33 2015
  * By:		EPIX(r)  XCAP V3.8
  * 		PIXCI(R) 64 Bit Library 3.08.00 [14.07.08]
- * 		PIXCI(R) 64 Bit Driver V3.8.00 [14.07.09.191424]
+ * 		PIXCI(R) 64 Bit driver V3.8.00 [14.07.09.191424]
  * OS:		Windows 64 bit
  */
 struct xcsv2format xcsv2format_32_id31232 =
@@ -576,10 +576,10 @@ struct xcsv2format xcsv2format_32_id31232 =
 /*
  * Structure:	xcsv2mode
  * Copyright:	(C) EPIX, Inc. 2000-2013
- * Created:	Mon Jun 08 09:56:37 2015
+ * Created:	Fri Jun 12 10:34:33 2015
  * By:		EPIX(r)  XCAP V3.8
  * 		PIXCI(R) 64 Bit Library 3.08.00 [14.07.08]
- * 		PIXCI(R) 64 Bit Driver V3.8.00 [14.07.09.191424]
+ * 		PIXCI(R) 64 Bit driver V3.8.00 [14.07.09.191424]
  * OS:		Windows 64 bit
  */
 struct xcsv2mode xcsv2mode_21_id31232 =
@@ -603,10 +603,10 @@ struct xcsv2mode xcsv2mode_21_id31232 =
 /*
  * Structure:	xcdxxformat
  * Copyright:	(C) EPIX, Inc. 2000-2013
- * Created:	Mon Jun 08 09:56:37 2015
+ * Created:	Fri Jun 12 10:34:33 2015
  * By:		EPIX(r)  XCAP V3.8
  * 		PIXCI(R) 64 Bit Library 3.08.00 [14.07.08]
- * 		PIXCI(R) 64 Bit Driver V3.8.00 [14.07.09.191424]
+ * 		PIXCI(R) 64 Bit driver V3.8.00 [14.07.09.191424]
  * OS:		Windows 64 bit
  */
 struct xcdxxformat xcdxxformat_45_id31232 =
@@ -619,10 +619,10 @@ struct xcdxxformat xcdxxformat_45_id31232 =
     0,                                                      /* ddch.rw        */
     0,                                                      /* ddch.fu        */
     0,                                                      /* ddch.rs        */
-    0x0,                                                    /* PRINC          */
+    0x3,                                                    /* PRINC          */
     0x0,                                                    /* EXSYNC         */
-    0x0,                                                    /* exsync         */
-    0x0,                                                    /* prin           */
+    0x4E,                                                   /* exsync         */
+    0x4C8,                                                  /* prin           */
     0x0,                                                    /* MWETS          */
     0x0,                                                    /* LCD            */
     0x0,                                                    /* PLLMX          */

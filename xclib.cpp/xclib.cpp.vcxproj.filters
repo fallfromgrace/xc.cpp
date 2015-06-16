@@ -74,5 +74,8 @@
     <ClInclude Include="include\xc\detail\frame_grabber_units.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\xc\detail\frame_interval_property.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

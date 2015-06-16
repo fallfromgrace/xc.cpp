@@ -77,14 +77,14 @@ namespace xc
 				return this->ports_;
 			}
 
-			// Gets the allocated and initialized xclib state handle.
-			pxdstate* handle()
-			{
-				return this->state_;
-			}
+			//// Gets the allocated and initialized xclib state handle.
+			//pxdstate* handle()
+			//{
+			//	return this->state_;
+			//}
 
 			// Gets the allocated and initialized xclib state handle.
-			const pxdstate* handle() const
+			pxdstate* handle() const
 			{
 				return this->state_;
 			}

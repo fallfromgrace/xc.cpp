@@ -7,6 +7,7 @@
 #include "xc\detail\capture_event.hpp"
 #include "xc\detail\image_view.hpp"
 #include "xc\detail\fault_event.hpp"
+#include "xc\detail\fault_info.hpp"
 #include "xc\detail\high_resolution_system_time_point.hpp"
 #include "xc\detail\frame_buffer_sequence.hpp"
 #include "xc\detail\util.hpp"
@@ -19,15 +20,17 @@ namespace xc
 	public:
 		// 
 		frame_grabber_unit(
-			pxdstate* state, 
-			const xc::detail::port_info& port_info, 
+			pxdstate* state,
+			const xc::detail::port_info& port_info,
 			size_t buffers,
 			const detail::high_resolution_system_time_point& clock) :
 			state(state),
 			port_(port_info.port()),
 			map_(port_info.map()),
-			clock(clock),
-			sequence(state, port_info.map(), buffers)
+			fault_event_(state, port_info.map()),
+			capture_event_(state, port_info.map()),
+			sequence(state, port_info.map(), buffers),
+			clock(clock)
 		{
 
 		}
@@ -38,6 +41,8 @@ namespace xc
 			port_(other.port_),
 			map_(other.map_),
 			clock(other.clock),
+			fault_event_(std::move(other.fault_event_)),
+			capture_event_(std::move(other.capture_event_)),
 			sequence(std::move(other.sequence))
 		{
 
@@ -55,16 +60,16 @@ namespace xc
 
 		// Creates a win32 event that signals when a new image is captured into an allocated frame
 		// buffer.  This image can be retrieved via get_last_captured_image.
-		capture_event create_capture_event() const
+		const capture_event& capture_event() const
 		{
-			return capture_event(this->state, this->map_);
+			return this->capture_event_;
 		}
 
 		// Creates a win32 event that signals when a fault occurs in the hardware.  Details of this 
 		// fault can be retrieved via check_fault.
-		fault_event create_fault_event() const
+		const fault_event& fault_event() const
 		{
-			return fault_event(this->state, this->map_);
+			return this->fault_event_;
 		}
 
 		// Returns a view of the last captured image.
@@ -116,22 +121,25 @@ namespace xc
 
 		// Checks the unit for faults.  Throws an exception if a fault is detected.
 		// NOTE: using exceptions for control flow makes me feel icky.
-		void check_fault() const
+		fault_info check_fault() const
 		{
 			std::array<char, 1024> buffer;
 			int result = ::pxe_mesgFaultText(
 				this->state, this->map_,
 				buffer.data(), buffer.size());
 			if (result == 1)
-				throw std::runtime_error(std::string(buffer.data()));
+				return fault_info(this->port_, std::string(buffer.data()));
 			else
 				detail::handle_result(result);
+			return fault_info(this->port_, "No fault detected.");
 		}
 	private:
 		pxdstate* const state;
 		const int port_;
 		const int map_;
 		frame_buffer_sequence sequence;
+		xc::fault_event fault_event_;
+		xc::capture_event capture_event_;
 		detail::high_resolution_system_time_point clock;
 
 	};

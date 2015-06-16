@@ -7,13 +7,15 @@
 
 #include "more\includes.hpp"
 #include "more\log.hpp"
-//#include "rx.hpp"
-//#include "win32\event_observable.hpp"
-//#include "win32\event.hpp"
+#include "rx.hpp"
+#include "win32\event_observable.hpp"
+#include "win32\event.hpp"
 #include "xcliball.h"
 
+#include "xc\detail\fault_info.hpp"
 #include "xc\detail\frame_grabber_options.hpp"
 #include "xc\detail\frame_grabber_unit.hpp"
+#include "xc\detail\frame_interval_property.hpp"
 #include "xc\detail\high_resolution_system_time_point.hpp"
 #include "xc\detail\util.hpp"
 #include "xc\detail\xclib_state.hpp"
@@ -34,19 +36,19 @@ namespace xc
 		{
 			for (const auto& port_info : this->state.ports())
 				this->units.emplace_back(
-					this->state.handle(),
-					port_info,
-					this->state.options().buffer_count(),
-					this->clock);
+				this->state.handle(),
+				port_info,
+				this->state.options().buffer_count(),
+				this->clock);
 		}
 
 		// 
-		frame_grabber(frame_grabber&& other) : 
+		frame_grabber(frame_grabber&& other) :
 			state(std::move(other.state)),
 			units(std::move(other.units)),
 			clock(other.clock)
 		{
-			
+
 		}
 
 		frame_grabber(const frame_grabber&) = delete;
@@ -87,7 +89,7 @@ namespace xc
 		// Enables the strobe signal.
 		void enable_strobe()
 		{
-			#include "xc\detail\video_trigger_enabled.fmt"
+#include "xc\detail\video_trigger_enabled.fmt"
 			pxe_videoFormatAsIncludedInit(this->state.handle(), 0);
 			int result = pxe_videoFormatAsIncluded(this->state.handle(), 0);
 			detail::handle_result(result);
@@ -96,7 +98,7 @@ namespace xc
 		// Disables the strobe signal.  Cannot perform capture while the strobe is disabled.
 		void disable_strobe()
 		{
-			#include "xc\detail\video_trigger_disabled.fmt"
+#include "xc\detail\video_trigger_disabled.fmt"
 			pxe_videoFormatAsIncludedInit(this->state.handle(), 0);
 			int result = pxe_videoFormatAsIncluded(this->state.handle(), 0);
 			detail::handle_result(result);
@@ -111,37 +113,40 @@ namespace xc
 			throw std::out_of_range("port");
 		}
 
-		//// Removing this functionality for now until i refactor the observables to only return 
-		//// the frame grabber index.  Then I can just add a select statement here.
-		//rxcpp::observable<image_view> when_image_captured() const
-		//{
-		//	static std::vector<capture_event> events = [this]()
-		//	{
-		//		std::vector<capture_event> events;
-		//		for (const auto& unit : units)
-		//			events.push_back(unit.create_capture_event());
-		//		return events;
+		frame_interval_property frame_interval() const
+		{
+			return frame_interval_property(this->state.handle(), this->state.unitmap(), 80, 10);
+		}
 
-		//	}();
-		//	static win32::manual_reset_event e;
+		// 
+		rxcpp::observable<image_view> when_image_captured() const
+		{
+			std::vector<HANDLE> wait_handles;
+			for (const auto& unit : units)
+				wait_handles.push_back(unit.capture_event().handle());
+			//wait_handles.push_back(this->close_event.handle());
+			return win32::when_any_event(wait_handles).map([this](int32_t index)
+			{
+				return this->units[index].get_last_captured_image();
+			}).subscribe_on(rxcpp::observe_on_new_thread());
+		}
 
-		//	std::vector<HANDLE> wait_handles;
-		//	return win32::from_any_event_signalled(wait_handles).map([this](int32_t index) 
-		//	{
-		//		return this->units[index].get_last_captured_image();
-		//	});
-		//}
-
-		//// 
-		//rxcpp::observable<fault_info> when_fault() const
-		//{
-		//	return this->fault_observable_ptr->get();
-		//}
+		// 
+		rxcpp::observable<fault_info> when_fault() const
+		{
+			std::vector<HANDLE> wait_handles;
+			for (const auto& unit : units)
+				wait_handles.push_back(unit.fault_event().handle());
+			//wait_handles.push_back(this->close_event.handle());
+			return win32::when_any_event(wait_handles).map([this](int32_t index)
+			{
+				return this->units[index].check_fault();
+			}).subscribe_on(rxcpp::observe_on_new_thread());
+		}
 	private:
 		detail::xclib_state state;
 		std::vector<frame_grabber_unit> units;
 		detail::high_resolution_system_time_point clock;
-		//std::unique_ptr<detail::fault_observable> fault_observable_ptr;
-		//std::unique_ptr<detail::capture_observable> capture_observable_ptr;
+		//win32::manual_reset_event close_event;
 	};
 }

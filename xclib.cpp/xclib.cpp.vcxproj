@@ -69,7 +69,7 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros">
-    <NuGetPackageImportStamp>b3ce0651</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>cb405ef0</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -186,6 +186,7 @@
   <ItemGroup>
     <ClInclude Include="include\xc\detail\capture_event.hpp" />
     <ClInclude Include="include\xc\detail\capture_observable.hpp" />
+    <ClInclude Include="include\xc\detail\frame_interval_property.hpp" />
     <ClInclude Include="include\xc\detail\high_resolution_system_time_point.hpp" />
     <ClInclude Include="include\xc\detail\port_info.hpp" />
     <ClInclude Include="include\xc\detail\fault_event.hpp" />
@@ -207,7 +208,7 @@
     <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
     <Import Project="..\packages\rxcpp.2.1.1\build\native\rxcpp.targets" Condition="Exists('..\packages\rxcpp.2.1.1\build\native\rxcpp.targets')" />
     <Import Project="..\packages\more.cpp.0.2.5645.23770\build\native\more.cpp.targets" Condition="Exists('..\packages\more.cpp.0.2.5645.23770\build\native\more.cpp.targets')" />
-    <Import Project="..\packages\win32.cpp.0.2.5645.32704\build\native\win32.cpp.targets" Condition="Exists('..\packages\win32.cpp.0.2.5645.32704\build\native\win32.cpp.targets')" />
+    <Import Project="..\packages\win32.cpp.0.2.5646.21438\build\native\win32.cpp.targets" Condition="Exists('..\packages\win32.cpp.0.2.5646.21438\build\native\win32.cpp.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -217,6 +218,6 @@
     <Error Condition="!Exists('..\packages\xclib.3.8.0.25063\build\native\xclib.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xclib.3.8.0.25063\build\native\xclib.props'))" />
     <Error Condition="!Exists('..\packages\rxcpp.2.1.1\build\native\rxcpp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\rxcpp.2.1.1\build\native\rxcpp.targets'))" />
     <Error Condition="!Exists('..\packages\more.cpp.0.2.5645.23770\build\native\more.cpp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\more.cpp.0.2.5645.23770\build\native\more.cpp.targets'))" />
-    <Error Condition="!Exists('..\packages\win32.cpp.0.2.5645.32704\build\native\win32.cpp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\win32.cpp.0.2.5645.32704\build\native\win32.cpp.targets'))" />
+    <Error Condition="!Exists('..\packages\win32.cpp.0.2.5646.21438\build\native\win32.cpp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\win32.cpp.0.2.5646.21438\build\native\win32.cpp.targets'))" />
   </Target>
 </Project>
